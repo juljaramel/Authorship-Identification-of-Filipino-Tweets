@@ -1,0 +1,106 @@
+import pandas as pd
+import emoji
+import re
+import statistics
+import numpy as np
+
+avg = 0
+count = 0
+total_lines = 0
+total_words = 0
+total_chars = 0
+line_details = []
+line_duplicate =[]
+sentence = set(".")
+digit = set("1234567890")
+alpha = set("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+upper = set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+sc = set("#,./?;:'!@$%^&*()_-+=[\"{|<>}]")
+ep = set("!")
+qm = set("?")       
+pm = set(".?!")   
+pc = set(".")  
+scw = ['u','ur','jk','lol', 'tnx', 'brb', 'char', 'wtg','wtd', 'wyd', 'asl', 'jwu', 'jfe', 'ttyl', 'lmao', 'lmfao', 'otp', 'loml', 'afk', 'txt', 'ty', 'sml', 'skl', 'fr', 'asf', 'af', 'gtg', 'hbd', 'fftb', 'tc', 'tl', 'gbu', 'gbua', 'mbtc', 'tca', 'ily','gl'
+       'jgh','xmas','wtf','etc','wth','LOL','TNX','BRB','CHAR','WTG','WTD','WYD','ASL','JWU','JFE','TTYL','LMAO','LMFAO','OTP','LOML','AFK','TXT','TY','SML','SKL','FR','ASF','AF','GTG','HBD','FFTB','TC','TL','GBU','GBUA','MBTC','TCA','ILY','GL',
+       'JGH','XMAS','WTF','ETC','WTH','JK','U','UR']
+
+#prints the data
+feature = pd.read_csv (r'C:\Users\USER\Documents\THESIS\20items.csv', encoding = "ISO-8859-1")
+print (feature)
+
+
+class duplicate():   
+    with open (r'C:\Users\USER\Documents\THESIS\DUPLICATE_FinalData.csv', encoding = "ISO-8859-1") as csv:
+        next(csv)
+        for line2 in csv:
+            total_lines += 1
+            total_words = len(line2.split())
+            char_count = sum(len(w)-1 == len(set(w))+1  for w in line2.split())
+            line_duplicate.append("Line %d has %d Word/s with repeated char" % (total_lines, char_count))           #F1 Word with repeated char
+            sentence_count = len([char for char in line2 if char in sentence])
+            line_duplicate.append("Line %d has %d Sentence/s" % (total_lines, sentence_count))                          #F3 Sentence Count
+            if sentence_count ==1:
+                avg =  total_words/1
+            elif sentence_count == 2:
+                avg =  total_words/2
+            elif sentence_count == 3:
+                avg =  total_words/3
+            elif sentence_count == 4:
+                avg =  total_words/4
+            elif sentence_count >= 5:
+                avg =  total_words/5
+            line_duplicate.append("Line %d has %d Average word per sentence/s" % (total_lines, avg))                      #F4 Average Word per Sentence 
+        print ("There are", total_lines, "lines in the file.")
+        for line2 in line_duplicate:
+            result = line2
+            print (result)
+class main():
+   #datafile = open(r'C:\Users\USER\Documents\THESIS\20itemss.csv', encoding = "ISO-8859-1")   
+    with open (r'C:\Users\USER\Documents\THESIS\FD.csv', encoding = "ISO-8859-1") as csv:
+        next(csv)
+        dp = duplicate()
+        for line in csv:
+            total_lines += 1
+            total_words = len(line.split())
+            
+            
+            line_details.append("Line %d has %d words" % (total_lines, total_words))           #F2 word count
+            #line_char_count = len([char for char in line if char in sentence])
+            #line_details.append("Line %d has %d Sentence/s" % (total_lines, line_char_count))  #F3 Sentence count      
+            #line_details.append(dp.result)  #F4 Average word count 
+            digit_count = len([char for char in line if char in digit])
+            line_details.append("Line %d has %d Digit" % (total_lines, digit_count))       #F5 Digit Count
+            spl = line.split()
+            line_char_count = (sum(len(total_word) for total_word in spl))
+            line_details.append("Line %d has %d Character/s" % (total_lines, line_char_count)) #F6 character count
+            line_char_count = len([char for char in line if char in alpha])
+            line_details.append("Line %d has %d Alphabet" % (total_lines, line_char_count))    #F7 alphabet count
+            line_char_count = sum(map(str.isupper, line.split()))
+            line_details.append("Line %d has %d Word/s in full upper case" % (total_lines, line_char_count))       #F8 Words starts in capital letter
+            line_char_count = len([char for char in line if char in upper])
+            line_details.append("Line %d has %d Upper Case" % (total_lines, line_char_count))  #F9 Upper Case Count
+            line_char_count = len([char for char in line if char in sc])
+            line_details.append("Line %d has %d Special Character" % (total_lines, line_char_count)) #F10 Special Character Count
+            line_char_count = len([char for char in line if char in ep])
+            line_details.append("Line %d has %d Exclamation Point" % (total_lines, line_char_count))#F11 Exclamation Point Count
+            line_char_count = len([char for char in line if char in qm])
+            line_details.append("Line %d has %d Question Mark" % (total_lines, line_char_count))    #F12 Question Mark Count
+            line_char_count = len([char for char in line if char in pm])
+            line_details.append("Line %d has %d Punctuation Mark" % (total_lines, line_char_count)) #F13 Punctuation Mark Count
+            line_char_count = len([char for char in line if char in pc])
+            line_details.append("Line %d has %d Period" % (total_lines, line_char_count))           #F14 Period Count
+            #s = len(char for char in line if line.isalnum())
+            #abc = ''.join(filter(str.isalnum, s))  recognize alnum but removes space
+            line_char_count =  sum(map(str.isalnum, line.split()))
+            count = total_words - line_char_count 
+            if count < 0:
+                count = 0
+            line_details.append("Line %d has %s Alphanumeric word/s" % (total_lines, count))  #F15 Alphanumeric Count
+            line_char_count = sum(map(str.istitle, line.split()))
+            line_details.append("Line %d has %d Word/s starts with uppercase" % (total_lines, line_char_count))  #F16 Word starts with upper case Count
+            line_char_count=len(set(scw).intersection(line.split()))
+            line_details.append("Line %d has %s Shortcut word/s" % (total_lines, line_char_count))  #F18 shortcut words Count
+            
+       
+for line in line_details:
+    print (line)
